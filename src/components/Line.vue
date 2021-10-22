@@ -1,17 +1,19 @@
 <template>
-  <div id="line" v-if="destination">
-    <div id="line-number-box" :style="style">
-      <div id="line-number">{{ lineName }}</div>
-      <div id="line-artwork" v-if="false">WLB ARTWORK HERE</div>
+  <div class="line" v-if="destination">
+    <div class="line-number-box" :class="[`line-${line.name}`, `type-${line.type}`]">
+      <div class="line-number" v-if="line.type !== 'ptTramWLB'">{{ line.name }}</div>
+      <div class="line-artwork" v-if="line.type === 'ptTramWLB'">
+        <img src="line-icon-wlb.svg" alt="Badner Bahn">
+      </div>
     </div>
-    <div id="direction-container">
-      <div id="destination-container">
-        <div id="destination">{{ destination }}</div>
-        <div id="alternative-destination" v-if="alternateDestination">
+    <div class="direction-container">
+      <div class="destination-container">
+        <div class="destination">{{ destination }}</div>
+        <div class="alternative-destination" v-if="alternateDestination">
           {{ alternateDestination }}
         </div>
       </div>
-      <div id="departures" v-if="departures">
+      <div class="departures" v-if="departures">
         <div class="departure departure-countdown" v-for="(departure, index) in departures" :key="index"
              :class="{'alternative-departure': departure.goesToAlternateDestination}">
           {{ departure.countdown }}
@@ -23,16 +25,12 @@
 </template>
 
 <script>
-import getWLColor from "../wl-color.js";
-
 export default {
   name: "Line",
   components: {},
   props: {line: Object},
   data() {
     return {
-      style: getWLColor(this.line.name),
-      lineName: String,
       destination: String,
       alternateDestination: String,
       departures: {
@@ -42,7 +40,6 @@ export default {
     }
   },
   mounted() {
-    this.lineName = this.line.name;
     this.destination = this.line.towards;
     this.alternateDestination = null;
     this.departures = this.line.departures.departure.slice(0, 2).map(dep => {
@@ -56,19 +53,33 @@ export default {
         countdown: dep.departureTime.countdown
       }
     })
+
+    // Transform destination names into title case if ptMetro (all caps from API)
+    if (this.line.type === 'ptMetro') {
+      this.destination = this.getTitleCase(this.destination);
+      this.alternateDestination =
+          this.alternateDestination !== null ? this.getTitleCase(this.alternateDestination) : null;
+    }
+  },
+  methods: {
+    getTitleCase: function (string) {
+      return string.toLowerCase().split(' ').map(function (word) {
+        return (word.charAt(0).toUpperCase() + word.slice(1));
+      }).join(' ');
+    }
   }
 }
 </script>
 
 <style scoped>
-#line {
+.line {
   display: grid;
   grid-template-columns: 64pt 1fr;
   grid-gap: 12pt;
   padding-bottom: 8pt;
 }
 
-#line-number-box {
+.line-number-box {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -80,14 +91,62 @@ export default {
   width: 52pt;
 }
 
-#line-number {
+/* TODO: Put me in a standalone CSS file
+   see: https://stackoverflow.com/questions/54977890/how-to-import-css-files-in-vue-components-with-scope-limited-to-components-only
+     */
+.type-ptMetro.line-U1 {
+  background-color: #ec688a;
+}
+
+.type-ptMetro.line-U2 {
+  background-color: #9f70ad;
+}
+
+.type-ptMetro.line-U3 {
+  background-color: #ef825c;
+}
+
+.type-ptMetro.line-U4 {
+  background-color: #91c36c;
+}
+
+.type-ptMetro.line-U5 {
+  background-color: #4db2e5;
+}
+
+.type-ptMetro.line-U6 {
+  background-color: #d95936;
+}
+
+.type-ptBusNight {
+  background-color: #092940;
+  color: #ffe400;
+}
+
+.type-ptTramWLB {
+  background-color: #fff6d4;
+  color: #257299;
+}
+
+.line-number {
   font-weight: bold;
   font-size: 24pt;
 
   font-variant-numeric: proportional-nums;
 }
 
-#direction-container {
+.line-artwork {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.line-artwork img {
+  max-height: 66.7%;
+  max-width: 66.7%;
+}
+
+.direction-container {
   font-size: 16pt;
 
   display: grid;
@@ -97,24 +156,24 @@ export default {
   width: 100%;
 }
 
-#destination-container {
+.destination-container {
   display: flex;
 }
 
-#alternative-destination {
+.alternative-destination {
   color: #91C36C;
   grid-column: 1/2;
 }
 
-#alternative-destination:before {
+.alternative-destination:before {
   content: "•";
   padding: 0 8pt;
 }
 
-#departures {
+.departures {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  justify-content: left;
+  justify-content: right;
 
   text-align: right;
 }
@@ -125,6 +184,6 @@ export default {
 }
 
 .alternative-departure {
-  color: #91C36C;
+  color: #91c36c;
 }
 </style>

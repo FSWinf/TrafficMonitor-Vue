@@ -23,8 +23,7 @@ export default {
     return {
       lines: undefined,
       requestParams: new URLSearchParams(
-          {
-          }
+          {}
       ),
       intervalEvent: undefined,
       dateNow: new Date()
@@ -47,68 +46,73 @@ export default {
           .then(json => {
             let lines = [];
             json.data.monitors.forEach(monitor => {
-              lines = lines.concat(monitor.lines.map(line => {
-                let depTime = line.departures.departure[0]?.departureTime.timeReal;
-                return {
-                  time: new Date(depTime).getTime(),
-                  line
-                };
-              }))
-            });
-            lines.sort((a, b) => {
-              if (a.time < b.time) {
-                return -1;
-              } else if (a.time > b.time) {
-                return 1;
-              } else {
-                return 0;
-              }
-            });
-            this.lines = lines.map(it => it.line);
+                  lines = lines.concat(monitor.lines)
+                }
+            );
+            this.lines = lines;
           });
     },
   },
   mounted() {
-    // let rbls = new Set([
-    //   1490, // Karlsplatz U
-    //   1502, // Karlsplatz U
-    //   1678, // Oper, Karlsplatz
-    //   1679, // Bärenmühlendurchgang
-    //   1680, // Karlsplatz U
-    //   1709, // Resselgasse
-    //   1710, // Karlsplatz U
-    //   1756, // Karlsplatz U
-    //   2611, // Karlsplatz U
-    //   4109, // Karlsplatz
-    //   4120, // Karlsplatz
-    //   4202, // Karlsplatz
-    //   4213, // Karlsplatz
-    //   4416, // Karlsplatz
-    //   4421, // Karlsplatz
-    //   5407, // Karlsplatz U
-    //   5416, // Karlsplatz ?
-    //   5573, // Karlsplatz U
-    //   5943, // Karlsplatz
-    //   7316, // Karlsplatz
-    // ]);
+    let stopIDs = new Set([
+      // DIVA 60200193
+      1679, // Bärenmühlendurchgang - 59A-H (-> Bhf. Meidling S U)
+      // 1704, // Bärenmühlendurchgang - 59A-R (-> Oper, Karlsplatz U)
 
-    // for (let rbl of rbls) {
-    //   this.requestParams.append('rbl', rbl.toString());
-    // }
-    
-    let divas = new Set([
-      60200657, // Karlsplatz
-      60200193, // Bärenmühlendurchgang
-      60201094, // Resselgasse
+      // DIVA 60201094
+      1709, // Resselgasse - 62-H (and other trams, -> Southbound)
+      4843, // Resselgasse - 62-R (and other trams, -> Northbound)
+      5628, // Resselgasse - N66
+
+      // DIVA 60200657
+      1490, // Karlsplatz U - 4A
+      // 1502, // Karlsplatz U - 4E
+      // 1680, // Karlsplatz U - 59A
+      // 1756, // Karlsplatz U - 62
+      // 2610, // Karlsplatz / Lothringerstraße -
+      // 2611, // Karlsplatz U -
+      4109, // Karlsplatz - U1-H (-> LEOPOLDAU)
+      4120, // Karlsplatz - U1-R (-> Oberlaa)
+      4202, // Karlsplatz - U2-R
+      4213, // Karlsplatz - U2-H
+      4416, // Karlsplatz - U4-R (-> HÜTTELDORF)
+      4421, // Karlsplatz - U4-H (-> HEILIGENSTADT)
+      // 5407, // Karlsplatz U -
+      // 5573, // Karlsplatz U -
+
+      // DIVA 60200975
+      // 13, Oper, Karlsplatz U - 1
+      // 51, Oper, Karlsplatz U - 2
+      // 1678, Oper, Karlsplatz U - 59A, N62
+      // 1710, Oper, Karlsplatz U - 62
+      // 2923, Oper, Karlsplatz U - 3A
+      // 5600, Oper, Karlsplatz U - N60-R
+      // 5601, Oper, Karlsplatz U -
+      // 5602, Oper, Karlsplatz U - N36
+      // 5603, Oper, Karlsplatz U -
+      // 5604, Oper, Karlsplatz U - N66
+      // 5605, Oper, Karlsplatz U - N25
+      // 5606, Oper, Karlsplatz U - N71
+      // 5607, Oper, Karlsplatz U - N49
+      // 5943, Karlsplatz - WLB
     ]);
 
-    for (let diva of divas) {
-      this.requestParams.append('diva', diva.toString());
+    for (let stopID of stopIDs) {
+      this.requestParams.append('stopId', stopID.toString());
     }
 
-    // this._updateWL();
+    // let divas = new Set([
+    //   60200657, // Karlsplatz
+    //   60200193, // Bärenmühlendurchgang
+    //   60201094, // Resselgasse
+    // ]);
+    //
+    // for (let diva of divas) {
+    //   this.requestParams.append('diva', diva.toString());
+    // }
+
     this._updateWL();
-    this.intervalEvent = window.setInterval(this._updateWL, 5 * 1000);
+    // this.intervalEvent = window.setInterval(this._updateWL, 5 * 1000);
     this.intervalEvent = window.setInterval(this._updateTime, 500);
   },
   beforeUnmount() {
