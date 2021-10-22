@@ -1,7 +1,7 @@
 <template>
   <div id="line" v-if="destination">
-    <div id="line-number-box">
-      <div id="line-number">{{ line.name }}</div>
+    <div id="line-number-box" :style="style">
+      <div id="line-number">{{ lineName }}</div>
       <div id="line-artwork" v-if="false">WLB ARTWORK HERE</div>
     </div>
     <div id="direction-container">
@@ -23,12 +23,16 @@
 </template>
 
 <script>
+import getWLColor from "../wl-color.js";
+
 export default {
   name: "Line",
   components: {},
   props: {line: Object},
   data() {
     return {
+      style: getWLColor(this.line.name),
+      lineName: String,
       destination: String,
       alternateDestination: String,
       departures: {
@@ -38,6 +42,7 @@ export default {
     }
   },
   mounted() {
+    this.lineName = this.line.name;
     this.destination = this.line.towards;
     this.alternateDestination = null;
     this.departures = this.line.departures.departure.slice(0, 2).map(dep => {
@@ -109,7 +114,7 @@ export default {
 #departures {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  justify-content: right;
+  justify-content: left;
 
   text-align: right;
 }
