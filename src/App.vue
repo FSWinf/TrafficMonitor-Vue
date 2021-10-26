@@ -3,29 +3,57 @@
     <Clock :dateNow="dateNow"/>
   </div>
   <div id="departure-monitor">
-    <div v-if="this.lines">
-      <Line v-for="(line, index) in this.lines" :line="line" :key="index"/>
-    </div>
+    <Stop v-for="(stop, index) in this.stops" :key="index" :stop="stop" :lines="stopLinesMap.get(stop)"/>
   </div>
 </template>
 
 <script>
 import Clock from "@/components/Clock";
-import Line from "@/components/Line";
+import Stop from "@/components/Stop";
+
+// eslint-disable-next-line no-unused-vars
+const CONFIG = {
+  transitDepartureWL: {
+    stops: [
+      {
+        name: "Bärenmühlendurchgang",
+        stopIDs: [1679],
+        minutesToStopByFoot: 3
+      },
+      {
+        name: "Resselgasse",
+        stopIDs: [1709, 4843, 5628],
+        minutesToStopByFoot: 3
+      },
+      {
+        name: "Karlsplatz",
+        stopIDs: [1490, 4109, 4120, 4202, 4213, 4416, 4421],
+        minutesToStopByFoot: 5
+      },
+    ]
+  }
+}
 
 export default {
   name: 'App',
   components: {
     Clock,
-    Line
+    Stop,
   },
   data() {
     return {
+      stops: CONFIG.transitDepartureWL.stops,
+
+      stopLinesMap: new Map(),
+
       lines: undefined,
+
       requestParams: new URLSearchParams(
           {}
       ),
-      intervalEvent: undefined,
+
+      updateWLIntervalEvent: Number,
+      updateTimeIntervalEvent: Number,
       dateNow: new Date()
     }
   },
@@ -44,14 +72,22 @@ export default {
       )
           .then(response => response.json())
           .then(json => {
-            let lines = [];
-            json.data.monitors.forEach(monitor => {
-                  lines = lines.concat(monitor.lines)
-                }
-            );
-            this.lines = lines;
+            this._processResponse(json);
           });
+
     },
+    _processResponse(response) {
+      for (let stop of this.stops) {
+        let lines = [];
+        response.data.monitors.filter(monitor => {
+              return  stop.stopIDs.includes(monitor.locationStop.properties.attributes.rbl);
+            }
+        ).forEach(monitor => {
+          lines = lines.concat(monitor.lines);
+        });
+        this.stopLinesMap.set(stop, lines);
+      }
+    }
   },
   mounted() {
     let stopIDs = new Set([
@@ -71,12 +107,12 @@ export default {
       // 1756, // Karlsplatz U - 62
       // 2610, // Karlsplatz / Lothringerstraße -
       // 2611, // Karlsplatz U -
-      4109, // Karlsplatz - U1-H (-> LEOPOLDAU)
+      4109, // Karlsplatz - U1-H (-> Leopoldau)
       4120, // Karlsplatz - U1-R (-> Oberlaa)
       4202, // Karlsplatz - U2-R
       4213, // Karlsplatz - U2-H
-      4416, // Karlsplatz - U4-R (-> HÜTTELDORF)
-      4421, // Karlsplatz - U4-H (-> HEILIGENSTADT)
+      4416, // Karlsplatz - U4-R (-> Hütteldorf)
+      4421, // Karlsplatz - U4-H (-> Heiligenstadt)
       // 5407, // Karlsplatz U -
       // 5573, // Karlsplatz U -
 
@@ -112,11 +148,12 @@ export default {
     // }
 
     this._updateWL();
-    // this.intervalEvent = window.setInterval(this._updateWL, 5 * 1000);
-    this.intervalEvent = window.setInterval(this._updateTime, 500);
+    this.updateWLIntervalEvent = window.setInterval(this._updateWL, 10 * 1000);
+    this.updateTimeIntervalEvent = window.setInterval(this._updateTime, 500);
   },
   beforeUnmount() {
-    clearInterval(this.intervalEvent);
+    clearInterval(this.updateWLIntervalEvent);
+    clearInterval(this.updateTimeIntervalEvent);
   }
 }
 </script>

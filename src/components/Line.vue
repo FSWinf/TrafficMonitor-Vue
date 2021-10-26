@@ -40,11 +40,11 @@ export default {
     }
   },
   mounted() {
-    this.destination = this.line.towards;
+    this.destination = this.line.towards.trim();
     this.alternateDestination = null;
     this.departures = this.line.departures.departure.slice(0, 2).map(dep => {
       let isAlternative = false;
-      if (dep.vehicle?.towards && dep.vehicle?.towards !== this.destination) {
+      if (dep.vehicle?.towards && dep.vehicle?.towards.trim() !== this.destination) {
         isAlternative = true;
         this.alternateDestination = dep.vehicle?.towards;
       }
