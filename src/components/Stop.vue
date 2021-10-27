@@ -1,5 +1,5 @@
 <template>
-  <h2>{{ name }}</h2>
+  <h2 class="stop-name">{{ name }}</h2>
   <div v-if="this.lines">
     <Line v-for="(line, index) in this.lines" :key="index" :line="line"/>
   </div>
@@ -28,5 +28,11 @@ export default {
 </script>
 
 <style scoped>
+.stop-name {
+  font-size: 18pt;
+  font-weight: bold;
+
+  margin: 0 0 4pt;
+}
 
 </style>

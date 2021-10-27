@@ -74,7 +74,7 @@ export default {
 <style scoped>
 .line {
   display: grid;
-  grid-template-columns: 64pt 1fr;
+  grid-template-columns: 54pt 1fr;
   grid-gap: 12pt;
   padding-bottom: 8pt;
 }
@@ -84,18 +84,18 @@ export default {
   justify-content: center;
   align-items: center;
 
-  background-color: #333333;
+  background-color: #404040;
   border-radius: 4pt;
   padding: 2pt 8pt;
 
-  width: 52pt;
+  width: 42pt;
 }
 
 /* TODO: Put me in a standalone CSS file
    see: https://stackoverflow.com/questions/54977890/how-to-import-css-files-in-vue-components-with-scope-limited-to-components-only
      */
 .type-ptMetro.line-U1 {
-  background-color: #ec688a;
+  background-color: #ed4a72;
 }
 
 .type-ptMetro.line-U2 {
@@ -107,7 +107,7 @@ export default {
 }
 
 .type-ptMetro.line-U4 {
-  background-color: #91c36c;
+  background-color: #88c25b;
 }
 
 .type-ptMetro.line-U5 {
@@ -130,7 +130,7 @@ export default {
 
 .line-number {
   font-weight: bold;
-  font-size: 24pt;
+  font-size: 18pt;
 
   font-variant-numeric: proportional-nums;
 }
@@ -139,11 +139,12 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+
+  padding: 2pt 8pt;
 }
 
 .line-artwork img {
-  max-height: 66.7%;
-  max-width: 66.7%;
+  height: 18pt;
 }
 
 .direction-container {
@@ -158,6 +159,10 @@ export default {
 
 .destination-container {
   display: flex;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .alternative-destination {

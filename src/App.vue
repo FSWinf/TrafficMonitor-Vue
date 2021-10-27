@@ -1,9 +1,13 @@
 <template>
   <div id="top-bar">
-    <Clock :dateNow="dateNow"/>
+    <div id="top-bar-row-container">
+      <div class="beta-badge">BETA</div>
+      <Clock :dateNow="dateNow"/>
+    </div>
+    <hr>
   </div>
   <div id="departure-monitor">
-    <Stop v-for="(stop, index) in this.stops" :key="index" :stop="stop" :lines="stopLinesMap.get(stop)"/>
+    <Stop v-for="(stop, index) in this.stops" :key="index" :lines="stopLinesMap.get(stop)" :stop="stop"/>
   </div>
 </template>
 
@@ -16,9 +20,9 @@ const CONFIG = {
   transitDepartureWL: {
     stops: [
       {
-        name: "Bärenmühlendurchgang",
-        stopIDs: [1679],
-        minutesToStopByFoot: 3
+        name: "Karlsplatz",
+        stopIDs: [1490, 4109, 4120, 4202, 4213, 4416, 4421],
+        minutesToStopByFoot: 5
       },
       {
         name: "Resselgasse",
@@ -26,9 +30,9 @@ const CONFIG = {
         minutesToStopByFoot: 3
       },
       {
-        name: "Karlsplatz",
-        stopIDs: [1490, 4109, 4120, 4202, 4213, 4416, 4421],
-        minutesToStopByFoot: 5
+        name: "Bärenmühlendurchgang",
+        stopIDs: [1679],
+        minutesToStopByFoot: 3
       },
     ]
   }
@@ -46,12 +50,11 @@ export default {
 
       stopLinesMap: new Map(),
 
-      lines: undefined,
-
       requestParams: new URLSearchParams(
           {}
       ),
 
+      lastUpdated: Date,
       updateWLIntervalEvent: Number,
       updateTimeIntervalEvent: Number,
       dateNow: new Date()
@@ -72,7 +75,14 @@ export default {
       )
           .then(response => response.json())
           .then(json => {
+            this.lastUpdated = new Date();
             this._processResponse(json);
+          })
+          .catch(() => {
+            const now = new Date();
+            if (this.lastUpdated && now - this.lastUpdated > 30 * 1_000) {
+              this.stopLinesMap.clear();
+            }
           });
 
     },
@@ -80,7 +90,7 @@ export default {
       for (let stop of this.stops) {
         let lines = [];
         response.data.monitors.filter(monitor => {
-              return  stop.stopIDs.includes(monitor.locationStop.properties.attributes.rbl);
+              return stop.stopIDs.includes(monitor.locationStop.properties.attributes.rbl);
             }
         ).forEach(monitor => {
           lines = lines.concat(monitor.lines);
@@ -90,62 +100,15 @@ export default {
     }
   },
   mounted() {
-    let stopIDs = new Set([
-      // DIVA 60200193
-      1679, // Bärenmühlendurchgang - 59A-H (-> Bhf. Meidling S U)
-      // 1704, // Bärenmühlendurchgang - 59A-R (-> Oper, Karlsplatz U)
+    let stopIDs = new Set();
 
-      // DIVA 60201094
-      1709, // Resselgasse - 62-H (and other trams, -> Southbound)
-      4843, // Resselgasse - 62-R (and other trams, -> Northbound)
-      5628, // Resselgasse - N66
-
-      // DIVA 60200657
-      1490, // Karlsplatz U - 4A
-      // 1502, // Karlsplatz U - 4E
-      // 1680, // Karlsplatz U - 59A
-      // 1756, // Karlsplatz U - 62
-      // 2610, // Karlsplatz / Lothringerstraße -
-      // 2611, // Karlsplatz U -
-      4109, // Karlsplatz - U1-H (-> Leopoldau)
-      4120, // Karlsplatz - U1-R (-> Oberlaa)
-      4202, // Karlsplatz - U2-R
-      4213, // Karlsplatz - U2-H
-      4416, // Karlsplatz - U4-R (-> Hütteldorf)
-      4421, // Karlsplatz - U4-H (-> Heiligenstadt)
-      // 5407, // Karlsplatz U -
-      // 5573, // Karlsplatz U -
-
-      // DIVA 60200975
-      // 13, Oper, Karlsplatz U - 1
-      // 51, Oper, Karlsplatz U - 2
-      // 1678, Oper, Karlsplatz U - 59A, N62
-      // 1710, Oper, Karlsplatz U - 62
-      // 2923, Oper, Karlsplatz U - 3A
-      // 5600, Oper, Karlsplatz U - N60-R
-      // 5601, Oper, Karlsplatz U -
-      // 5602, Oper, Karlsplatz U - N36
-      // 5603, Oper, Karlsplatz U -
-      // 5604, Oper, Karlsplatz U - N66
-      // 5605, Oper, Karlsplatz U - N25
-      // 5606, Oper, Karlsplatz U - N71
-      // 5607, Oper, Karlsplatz U - N49
-      // 5943, Karlsplatz - WLB
-    ]);
+    CONFIG.transitDepartureWL.stops.forEach(stop => {
+      stop.stopIDs.forEach(id => stopIDs.add(id));
+    })
 
     for (let stopID of stopIDs) {
       this.requestParams.append('stopId', stopID.toString());
     }
-
-    // let divas = new Set([
-    //   60200657, // Karlsplatz
-    //   60200193, // Bärenmühlendurchgang
-    //   60201094, // Resselgasse
-    // ]);
-    //
-    // for (let diva of divas) {
-    //   this.requestParams.append('diva', diva.toString());
-    // }
 
     this._updateWL();
     this.updateWLIntervalEvent = window.setInterval(this._updateWL, 10 * 1000);
@@ -171,6 +134,21 @@ export default {
 
 #top-bar {
   margin-bottom: 24pt;
+}
+
+#top-bar-row-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.beta-badge {
+  font-size: 18pt;
+
+  background-color: #fff;
+  color: #0c0c0c;
+
+  padding: 0 8pt;
 }
 
 #departure-monitor {

@@ -1,6 +1,5 @@
 <template>
   <div class="time">{{timeString}}</div>
-  <hr>
 </template>
 
 <script>
