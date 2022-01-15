@@ -1,65 +1,59 @@
 <template>
-  <div class="line" v-if="destination">
-    <div class="line-number-box" :class="[`line-${line.name}`, `type-${line.type}`]">
-      <div class="line-number" v-if="line.type !== 'ptTramWLB'">{{ line.name }}</div>
-      <div class="line-artwork" v-if="line.type === 'ptTramWLB'">
-        <img src="line-icon-wlb.svg" alt="Badner Bahn">
+  <div v-if="destination" class="line">
+    <div :class="[`line-${line.name}`, `type-${line.type}`]" class="line-number-box">
+      <div v-if="line.type !== 'ptTramWLB'" class="line-number">{{ line.name }}</div>
+      <div v-if="line.type === 'ptTramWLB'" class="line-artwork">
+        <img alt="Badner Bahn" src="line-icon-wlb.svg">
       </div>
     </div>
     <div class="direction-container">
       <div class="destination-container">
         <div class="destination">{{ destination }}</div>
-        <div class="alternative-destination" v-if="alternateDestination">
+        <div v-if="alternateDestination" class="alternative-destination">
           {{ alternateDestination }}
         </div>
       </div>
-      <div class="departures" v-if="departures">
-        <div class="departure departure-countdown" v-for="(departure, index) in departures" :key="index"
-             :class="{'alternative-departure': departure.goesToAlternateDestination}">
+      <div v-if="departures" class="departures">
+        <div v-for="(departure, index) in departures" :key="index"
+             :class="{'alternative-departure': departure.goesToAlternateDestination}"
+             class="departure departure-countdown">
           {{ departure.countdown }}
         </div>
       </div>
-
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "Line",
+  name: "LineComponent",
   components: {},
-  props: {line: Object},
+  props: {
+    line: Object
+  },
   data() {
     return {
-      destination: String,
-      alternateDestination: String,
-      departures: {
-        goesToAlternateDestination: Boolean,
-        countdown: Number
-      }
+      alternateDestination: null,
     }
   },
-  mounted() {
-    this.destination = this.line.towards.trim();
-    this.alternateDestination = null;
-    this.departures = this.line.departures.departure.slice(0, 2).map(dep => {
-      let isAlternative = false;
-      if (dep.vehicle?.towards && dep.vehicle?.towards.trim() !== this.destination) {
-        isAlternative = true;
-        this.alternateDestination = dep.vehicle?.towards;
-      }
-      return {
-        goesToAlternateDestination: isAlternative,
-        countdown: dep.departureTime.countdown
-      }
-    })
-
-    // Transform destination names into title case if ptMetro (all caps from API)
-    if (this.line.type === 'ptMetro') {
-      this.destination = this.getTitleCase(this.destination);
-      this.alternateDestination =
-          this.alternateDestination !== null ? this.getTitleCase(this.alternateDestination) : null;
-    }
+  computed: {
+    destination: function () {
+      return this.line.towards.trim();
+    },
+    departures: function () {
+      return this.line.departures.departure.slice(0, 2).map(dep => {
+        let destination = this.line.towards.trim();
+        let isAlternative = false;
+        if (dep.vehicle?.towards && dep.vehicle?.towards.trim() !== destination) {
+          isAlternative = true;
+          this.alternateDestination = dep.vehicle?.towards;
+        }
+        return {
+          goesToAlternateDestination: isAlternative,
+          countdown: dep.departureTime.countdown
+        }
+      })
+    },
   },
   methods: {
     getTitleCase: function (string) {

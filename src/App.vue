@@ -1,13 +1,15 @@
 <template>
-  <div id="top-bar">
-    <div id="top-bar-row-container">
-      <div class="beta-badge">BETA</div>
-      <Clock :dateNow="dateNow"/>
+  <div id="info-display-winf">
+    <div id="top-bar">
+      <div id="top-bar-row-container">
+        <div class="beta-badge">BETA</div>
+        <Clock :dateNow="dateNow"/>
+      </div>
+      <hr>
     </div>
-    <hr>
-  </div>
-  <div id="departure-monitor">
-    <Stop v-for="(stop, index) in this.stops" :key="index" :lines="stopLinesMap.get(stop)" :stop="stop"/>
+    <div v-if="wlResponse" id="departure-monitor">
+      <Stop v-for="(stop, index) in this.stops" :key="index" :stop="stop" :wlResponse="wlResponse"/>
+    </div>
   </div>
 </template>
 
@@ -48,13 +50,15 @@ export default {
     return {
       stops: CONFIG.transitDepartureWL.stops,
 
-      stopLinesMap: new Map(),
-
       requestParams: new URLSearchParams(
           {}
       ),
 
       lastUpdated: Date,
+      dataOutdated: Boolean,
+
+      wlResponse: undefined,
+
       updateWLIntervalEvent: Number,
       updateTimeIntervalEvent: Number,
       dateNow: new Date()
@@ -76,28 +80,16 @@ export default {
           .then(response => response.json())
           .then(json => {
             this.lastUpdated = new Date();
-            this._processResponse(json);
+            this.dataOutdated = false;
+            this.wlResponse = json;
           })
           .catch(() => {
             const now = new Date();
             if (this.lastUpdated && now - this.lastUpdated > 30 * 1_000) {
-              this.stopLinesMap.clear();
+              this.dataOutdated = true;
             }
           });
-
     },
-    _processResponse(response) {
-      for (let stop of this.stops) {
-        let lines = [];
-        response.data.monitors.filter(monitor => {
-              return stop.stopIDs.includes(monitor.locationStop.properties.attributes.rbl);
-            }
-        ).forEach(monitor => {
-          lines = lines.concat(monitor.lines);
-        });
-        this.stopLinesMap.set(stop, lines);
-      }
-    }
   },
   mounted() {
     let stopIDs = new Set();
@@ -111,7 +103,7 @@ export default {
     }
 
     this._updateWL();
-    this.updateWLIntervalEvent = window.setInterval(this._updateWL, 10 * 1000);
+    this.updateWLIntervalEvent = window.setInterval(this._updateWL, 30 * 1000);
     this.updateTimeIntervalEvent = window.setInterval(this._updateTime, 500);
   },
   beforeUnmount() {

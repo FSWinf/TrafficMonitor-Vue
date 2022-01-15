@@ -1,27 +1,55 @@
 <template>
-  <h2 class="stop-name">{{ name }}</h2>
-  <div v-if="this.lines">
-    <Line v-for="(line, index) in this.lines" :key="index" :line="line"/>
+  <div v-if="wlResponse" class="stop">
+    <h2 v-if="lines" class="stop-name">{{ name }}</h2>
+    <LineGroup v-for="name in this.lineGroupNames" :key="name" :lines="getLinesByName(name)" :name="name"/>
   </div>
 </template>
 
 <script>
-import Line from "@/components/Line";
+import LineGroup from "@/components/LineGroup";
 
 export default {
   name: "Stop",
   components: {
-    Line
+    LineGroup
   },
   props: {
     stop: Object,
-    lines: [Object]
+    wlResponse: Object
   },
   data() {
     return {
       name: this.stop.name,
       stopIDs: this.stop.stopIDs,
-      minutesToStopByFoot: this.stop.minutesToStopByFoot
+      minutesToStopByFoot: this.stop.minutesToStopByFoot,
+
+      lines: []
+    }
+  },
+  methods: {
+    getLinesByName(name) {
+      if (this.wlResponse) {
+        return this.wlResponse.data.monitors
+            .filter(monitor => {
+              return this.stopIDs.includes(monitor.locationStop.properties.attributes.rbl);
+            })
+            .flatMap(monitor => monitor.lines)
+            .filter(line => line.name === name)
+      } else return []
+    }
+  },
+  computed: {
+    lineGroupNames: function () {
+      if (this.wlResponse) {
+        return new Set(
+            this.wlResponse.data.monitors
+                .filter(monitor => {
+                  return this.stopIDs.includes(monitor.locationStop.properties.attributes.rbl);
+                })
+                .flatMap(monitor => monitor.lines)
+                .map(line => line.name)
+        );
+      } else return new Set();
     }
   }
 }
