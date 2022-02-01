@@ -16,6 +16,8 @@ export default {
     name: String,
     lines: Array
   },
+  computed: {
+  }
 }
 </script>
 

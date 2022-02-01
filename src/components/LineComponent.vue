@@ -8,9 +8,9 @@
     </div>
     <div class="direction-container">
       <div class="destination-container">
-        <div class="destination">{{ destination }}</div>
+        <div class="destination">{{ line.type === 'ptMetro' ? getTitleCase(destination) : destination }}</div>
         <div v-if="alternateDestination" class="alternative-destination">
-          {{ alternateDestination }}
+          {{ line.type === 'ptMetro' ? getTitleCase(alternateDestination) : alternateDestination  }}
         </div>
       </div>
       <div v-if="departures" class="departures">
@@ -44,7 +44,7 @@ export default {
       return this.line.departures.departure.slice(0, 2).map(dep => {
         let destination = this.line.towards.trim();
         let isAlternative = false;
-        if (dep.vehicle?.towards && dep.vehicle?.towards.trim() !== destination) {
+        if (dep.vehicle?.towards && dep.vehicle?.towards.trim().localeCompare(destination.trim(), 'de-AT')) {
           isAlternative = true;
           this.alternateDestination = dep.vehicle?.towards;
         }

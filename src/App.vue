@@ -3,7 +3,7 @@
     <div id="top-bar">
       <div id="top-bar-row-container">
         <div class="beta-badge">BETA</div>
-        <Clock :dateNow="dateNow"/>
+        <Clock/>
       </div>
       <hr>
     </div>
@@ -85,7 +85,7 @@ export default {
           })
           .catch(() => {
             const now = new Date();
-            if (this.lastUpdated && now - this.lastUpdated > 30 * 1_000) {
+            if (this.lastUpdated && now - this.lastUpdated > 30_000) {
               this.dataOutdated = true;
             }
           });
@@ -103,12 +103,11 @@ export default {
     }
 
     this._updateWL();
-    this.updateWLIntervalEvent = window.setInterval(this._updateWL, 30 * 1000);
-    this.updateTimeIntervalEvent = window.setInterval(this._updateTime, 500);
+    this.updateWLIntervalEvent = window.setInterval(this._updateWL, 30_000);
+    // this.updateTimeIntervalEvent = window.setInterval(this._updateTime, 500);
   },
   beforeUnmount() {
     clearInterval(this.updateWLIntervalEvent);
-    clearInterval(this.updateTimeIntervalEvent);
   }
 }
 </script>
