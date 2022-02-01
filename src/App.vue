@@ -65,9 +65,6 @@ export default {
     }
   },
   methods: {
-    _updateTime() {
-      this.dateNow = new Date();
-    },
     _updateWL() {
       fetch('http://localhost:8080/ogd_realtime/monitor?'
           + this.requestParams,
@@ -104,7 +101,6 @@ export default {
 
     this._updateWL();
     this.updateWLIntervalEvent = window.setInterval(this._updateWL, 30_000);
-    // this.updateTimeIntervalEvent = window.setInterval(this._updateTime, 500);
   },
   beforeUnmount() {
     clearInterval(this.updateWLIntervalEvent);

@@ -10,14 +10,15 @@
       <div class="destination-container">
         <div class="destination">{{ line.type === 'ptMetro' ? getTitleCase(destination) : destination }}</div>
         <div v-if="alternateDestination" class="alternative-destination">
-          {{ line.type === 'ptMetro' ? getTitleCase(alternateDestination) : alternateDestination  }}
+          {{ line.type === 'ptMetro' ? getTitleCase(alternateDestination) : alternateDestination }}
         </div>
       </div>
       <div v-if="departures" class="departures">
         <div v-for="(departure, index) in departures" :key="index"
-             :class="{'alternative-departure': departure.goesToAlternateDestination}"
              class="departure departure-countdown">
-          {{ departure.countdown }}
+          <span :class="{'alternative-departure': departure.goesToAlternateDestination}">{{
+              departure.countdown
+            }}</span>
         </div>
       </div>
     </div>
@@ -160,11 +161,18 @@ export default {
 }
 
 .alternative-destination {
-  color: #91C36C;
+  color: #FFF;
+  background-color: rgba(144, 194, 107, 0.50);
+  padding: 0 4pt;
   grid-column: 1/2;
 }
 
-.alternative-destination:before {
+.destination:after {
+  content: " ";
+  padding: 0 8pt;
+}
+
+.destination:has(~ .alternative-destination):after {
   content: "•";
   padding: 0 8pt;
 }
@@ -182,7 +190,12 @@ export default {
   padding-left: 8pt;
 }
 
-.alternative-departure {
-  color: #91c36c;
+.departure-countdown span {
+  padding: 2pt;
+}
+
+.departure-countdown span.alternative-departure {
+  color: #FFF;
+  background-color: rgba(144, 194, 107, 0.50);
 }
 </style>
