@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import Clock from "@/components/Clock";
-import Stop from "@/components/Stop";
+import Clock from "./components/Clock.vue";
+import Stop from "./components/Stop.vue";
 
 // eslint-disable-next-line no-unused-vars
 const CONFIG = {

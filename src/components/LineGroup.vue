@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import LineComponent from "@/components/LineComponent";
+import LineComponent from "./LineComponent.vue";
 
 export default {
   name: "LineGroup",

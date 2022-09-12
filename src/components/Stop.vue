@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import LineGroup from "@/components/LineGroup";
+import LineGroup from "./LineGroup.vue";
 
 export default {
   name: "Stop",
