@@ -13,7 +13,7 @@ export default {
   },
   computed: {
     timeString: function () {
-      return this.dateNow.toLocaleTimeString('de-AT');
+      return this.dateNow.toLocaleTimeString('de-AT', {timeStyle: "short"});
     }
   },
   methods: {
@@ -22,7 +22,7 @@ export default {
     },
   },
   mounted() {
-    this.updateTimeIntervalEvent = window.setInterval(this.updateTime, 500);
+    this.updateTimeIntervalEvent = window.setInterval(this.updateTime, 10000);
   },
   beforeUnmounted() {
     clearInterval(this.updateTimeIntervalEvent);
@@ -32,7 +32,7 @@ export default {
 
 <style scoped>
 div.time {
-  font-size: 42pt;
+  font-size: 48pt;
   text-align: right;
 
   font-variant: tabular-nums;

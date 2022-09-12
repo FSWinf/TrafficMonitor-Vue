@@ -110,7 +110,13 @@ export default {
 
 <style>
 :root {
-  font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+  --main-font-family: "Ubuntu";
+
+  --stop-name-font-size: 24pt;
+  --line-number-font-size: 24pt;
+  --text-font-size: 18pt;
+
+  font-family: var(--main-font-family), -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #FFF;
@@ -130,7 +136,7 @@ export default {
 }
 
 .beta-badge {
-  font-size: 18pt;
+  font-size: 24pt;
 
   background-color: #fff;
   color: #0c0c0c;

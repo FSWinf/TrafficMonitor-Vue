@@ -57,7 +57,7 @@ export default {
 
 <style scoped>
 .stop-name {
-  font-size: 18pt;
+  font-size: var(--stop-name-font-size);
   font-weight: bold;
 
   margin: 0 0 4pt;

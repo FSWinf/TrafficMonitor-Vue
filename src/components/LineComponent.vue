@@ -3,7 +3,7 @@
     <div :class="[`line-${line.name}`, `type-${line.type}`]" class="line-number-box">
       <div v-if="line.type !== 'ptTramWLB'" class="line-number">{{ line.name }}</div>
       <div v-if="line.type === 'ptTramWLB'" class="line-artwork">
-        <img alt="Badner Bahn" src="line-icon-wlb.svg">
+        <img alt="Badner Bahn" src="@/assets/line-icon-wlb.png">
       </div>
     </div>
     <div class="direction-container">
@@ -69,7 +69,7 @@ export default {
 <style scoped>
 .line {
   display: grid;
-  grid-template-columns: 54pt 1fr;
+  grid-template-columns: 64pt 1fr;
   grid-gap: 12pt;
   padding-bottom: 8pt;
 }
@@ -83,49 +83,12 @@ export default {
   border-radius: 4pt;
   padding: 2pt 8pt;
 
-  width: 42pt;
-}
-
-/* TODO: Put me in a standalone CSS file
-   see: https://stackoverflow.com/questions/54977890/how-to-import-css-files-in-vue-components-with-scope-limited-to-components-only
-     */
-.type-ptMetro.line-U1 {
-  background-color: #ed4a72;
-}
-
-.type-ptMetro.line-U2 {
-  background-color: #9f70ad;
-}
-
-.type-ptMetro.line-U3 {
-  background-color: #ef825c;
-}
-
-.type-ptMetro.line-U4 {
-  background-color: #88c25b;
-}
-
-.type-ptMetro.line-U5 {
-  background-color: #4db2e5;
-}
-
-.type-ptMetro.line-U6 {
-  background-color: #d95936;
-}
-
-.type-ptBusNight {
-  background-color: #092940;
-  color: #ffe400;
-}
-
-.type-ptTramWLB {
-  background-color: #fff6d4;
-  color: #257299;
+  width: calc(var(--stop-name-font-size) * 2);
 }
 
 .line-number {
   font-weight: bold;
-  font-size: 18pt;
+  font-size: var(--line-number-font-size);
 
   font-variant-numeric: proportional-nums;
 }
@@ -139,11 +102,11 @@ export default {
 }
 
 .line-artwork img {
-  height: 18pt;
+  height: var(--line-number-font-size);
 }
 
 .direction-container {
-  font-size: 16pt;
+  font-size: var(--text-font-size);
 
   display: grid;
   grid-template-columns: 1fr 4em;
@@ -161,8 +124,8 @@ export default {
 }
 
 .alternative-destination {
-  color: #FFF;
-  background-color: rgba(144, 194, 107, 0.50);
+  color: #000;
+  background-color: #FFF;
   padding: 0 4pt;
   grid-column: 1/2;
 }
@@ -195,7 +158,8 @@ export default {
 }
 
 .departure-countdown span.alternative-departure {
-  color: #FFF;
-  background-color: rgba(144, 194, 107, 0.50);
+  color: #000;
+  background-color: #FFF;
 }
 </style>
+<style scoped src="@/assets/line-styles.css"></style>
