@@ -1,6 +1,10 @@
 <template>
   <div v-if="wlResponse" class="stop">
-    <h2 v-if="lines" class="stop-name">{{ name }}</h2>
+    <h2 v-if="lines" class="stop-name">
+      {{ name }}
+      <span class="walking-time"><img class="walking-time-icon" alt="Waking time" src="@/assets/person-walking-solid.svg">…{{ minutesToStopByFoot }} min
+      </span>
+    </h2>
     <LineGroup v-for="name in this.lineGroupNames" :key="name" :lines="getLinesByName(name)" :name="name"/>
   </div>
 </template>
@@ -61,6 +65,16 @@ export default {
   font-weight: bold;
 
   margin: 0 0 4pt;
+}
+
+.walking-time {
+  font-weight: normal;
+  margin-left: 1.5em;
+}
+
+.walking-time-icon {
+  height: 0.85em;
+  color: inherit;
 }
 
 </style>

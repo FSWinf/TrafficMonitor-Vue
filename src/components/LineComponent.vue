@@ -79,7 +79,7 @@ export default {
   justify-content: center;
   align-items: center;
 
-  background-color: #404040;
+  background-color: #1a1a1a;
   border-radius: 4pt;
   padding: 2pt 8pt;
 
@@ -162,4 +162,4 @@ export default {
   background-color: #FFF;
 }
 </style>
-<style scoped src="@/assets/line-styles.css"></style>
+<style scoped src="../assets/line-styles.css"></style>

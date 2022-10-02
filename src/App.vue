@@ -24,17 +24,17 @@ const CONFIG = {
       {
         name: "Karlsplatz",
         stopIDs: [1490, 4109, 4120, 4202, 4213, 4416, 4421],
-        minutesToStopByFoot: 5
+        minutesToStopByFoot: 7
       },
       {
         name: "Resselgasse",
         stopIDs: [1709, 4843, 5628],
-        minutesToStopByFoot: 3
+        minutesToStopByFoot: 2
       },
       {
         name: "Bärenmühlendurchgang",
         stopIDs: [1679],
-        minutesToStopByFoot: 3
+        minutesToStopByFoot: 2
       },
     ]
   }
@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     _updateWL() {
-      fetch('http://localhost:8080/ogd_realtime/monitor?'
+      fetch('/ogd_realtime/monitor?'
           + this.requestParams,
           {
             headers: {
@@ -110,18 +110,6 @@ export default {
 
 <style>
 :root {
-  --main-font-family: "Ubuntu";
-
-  --stop-name-font-size: 24pt;
-  --line-number-font-size: 24pt;
-  --text-font-size: 18pt;
-
-  font-family: var(--main-font-family), -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #FFF;
-  background-color: #0C0C0C;
-
   padding: 12pt 32pt;
 }
 
@@ -139,7 +127,7 @@ export default {
   font-size: 24pt;
 
   background-color: #fff;
-  color: #0c0c0c;
+  color: #000;
 
   padding: 0 8pt;
 }

@@ -1,3 +1,13 @@
 :root {
+    --main-font-family: "Ubuntu";
 
+    --stop-name-font-size: 24pt;
+    --line-number-font-size: 24pt;
+    --text-font-size: 18pt;
+
+    font-family: var(--main-font-family), -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #FFF;
+    background-color: #000;
 }
