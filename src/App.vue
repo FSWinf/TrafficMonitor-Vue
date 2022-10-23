@@ -7,8 +7,11 @@
       </div>
       <hr>
     </div>
-    <div v-if="wlResponse" id="departure-monitor">
+    <div v-if="wlResponse && !dataOutdated" id="departure-monitor">
       <Stop v-for="(stop, index) in this.stops" :key="index" :stop="stop" :wlResponse="wlResponse"/>
+    </div>
+    <div v-if="!wlResponse || dataOutdated">
+      <div>Keine Echtzeitdaten</div>
     </div>
   </div>
 </template>
@@ -17,28 +20,7 @@
 import Clock from "./components/Clock.vue";
 import Stop from "./components/Stop.vue";
 
-// eslint-disable-next-line no-unused-vars
-const CONFIG = {
-  transitDepartureWL: {
-    stops: [
-      {
-        name: "Karlsplatz",
-        stopIDs: [1490, 4109, 4120, 4202, 4213, 4416, 4421],
-        minutesToStopByFoot: 7
-      },
-      {
-        name: "Resselgasse",
-        stopIDs: [1709, 4843, 5628],
-        minutesToStopByFoot: 2
-      },
-      {
-        name: "Bärenmühlendurchgang",
-        stopIDs: [1679],
-        minutesToStopByFoot: 2
-      },
-    ]
-  }
-}
+import CONFIG from './config/config.json';
 
 export default {
   name: 'App',
@@ -48,7 +30,7 @@ export default {
   },
   data() {
     return {
-      stops: CONFIG.transitDepartureWL.stops,
+      stops: CONFIG.stops,
 
       requestParams: new URLSearchParams(
           {}
@@ -89,15 +71,23 @@ export default {
     },
   },
   mounted() {
-    let stopIDs = new Set();
-
-    CONFIG.transitDepartureWL.stops.forEach(stop => {
-      stop.stopIDs.forEach(id => stopIDs.add(id));
-    })
-
-    for (let stopID of stopIDs) {
-      this.requestParams.append('stopId', stopID.toString());
+    // Set styles from configs
+    var domRoot = document.querySelector(':root');
+    for (const [styleKey, styleVar] of Object.entries(CONFIG.style)) {
+      domRoot.style.setProperty(styleKey, styleVar);
     }
+
+    // Get all DIVAs
+    let DIVAs = new Set(
+        this.stops.map(stop => {
+          return stop.diva
+        })
+    );
+
+    // form http query params
+    DIVAs.forEach(diva => {
+      this.requestParams.append('diva', diva.toString());
+    })
 
     this._updateWL();
     this.updateWLIntervalEvent = window.setInterval(this._updateWL, 30_000);

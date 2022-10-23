@@ -1,5 +1,5 @@
 :root {
-    --main-font-family: "Ubuntu";
+    --main-font-family: "Ubuntu", system-ui, san-serif;
 
     --stop-name-font-size: 24pt;
     --line-number-font-size: 24pt;

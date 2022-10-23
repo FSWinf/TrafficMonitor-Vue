@@ -1,25 +1,17 @@
 <template>
-  <div v-if="destination" class="line">
-    <div :class="[`line-${line.name}`, `type-${line.type}`]" class="line-number-box">
-      <div v-if="line.type !== 'ptTramWLB'" class="line-number">{{ line.name }}</div>
-      <div v-if="line.type === 'ptTramWLB'" class="line-artwork">
-        <img alt="Badner Bahn" src="@/assets/line-icon-wlb.png">
+  <div class="direction-container">
+    <div class="destination-container">
+      <div class="destination">{{ line.type === 'ptMetro' ? getTitleCase(destination) : destination }}</div>
+      <div v-if="alternateDestination" class="alternative-destination">
+        {{ line.type === 'ptMetro' ? getTitleCase(alternateDestination) : alternateDestination }}
       </div>
     </div>
-    <div class="direction-container">
-      <div class="destination-container">
-        <div class="destination">{{ line.type === 'ptMetro' ? getTitleCase(destination) : destination }}</div>
-        <div v-if="alternateDestination" class="alternative-destination">
-          {{ line.type === 'ptMetro' ? getTitleCase(alternateDestination) : alternateDestination }}
-        </div>
-      </div>
-      <div v-if="departures" class="departures">
-        <div v-for="(departure, index) in departures" :key="index"
-             class="departure departure-countdown">
+    <div v-if="departures" class="departures">
+      <div v-for="(departure, index) in departures" :key="index"
+           class="departure departure-countdown">
           <span :class="{'alternative-departure': departure.goesToAlternateDestination}">{{
               departure.countdown
             }}</span>
-        </div>
       </div>
     </div>
   </div>
@@ -42,23 +34,27 @@ export default {
       return this.line.towards.trim();
     },
     departures: function () {
-      return this.line.departures.departure.slice(0, 2).map(dep => {
-        let destination = this.line.towards.trim();
-        let isAlternative = false;
-        if (dep.vehicle?.towards && dep.vehicle?.towards.trim().localeCompare(destination.trim(), 'de-AT')) {
-          isAlternative = true;
-          this.alternateDestination = dep.vehicle?.towards;
-        }
-        return {
-          goesToAlternateDestination: isAlternative,
-          countdown: dep.departureTime.countdown
+      this.alternateDestination = null;
+      return this.line.departures.departure.slice(0, 3).map(dep => {
+        let towards = dep.vehicle?.towards;
+        if (towards && towards.trim().localeCompare(this.destination, 'de-AT', {sensitivity: 'base'})) {
+          this.alternateDestination = towards.trim();
+          return {
+            goesToAlternateDestination: true,
+            countdown: dep.departureTime.countdown
+          };
+        } else {
+          return {
+            goesToAlternateDestination: false,
+            countdown: dep.departureTime.countdown
+          }
         }
       })
     },
   },
   methods: {
     getTitleCase: function (string) {
-      return string.toLowerCase().split(' ').map(function (word) {
+      return string.trim().toLocaleLowerCase('de-AT').split(' ').map(function (word) {
         return (word.charAt(0).toUpperCase() + word.slice(1));
       }).join(' ');
     }
@@ -66,47 +62,14 @@ export default {
 }
 </script>
 
-<style scoped>
-.line {
-  display: grid;
-  grid-template-columns: 64pt 1fr;
-  grid-gap: 12pt;
-  padding-bottom: 8pt;
-}
-
-.line-number-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  background-color: #1a1a1a;
-  border-radius: 4pt;
-  padding: 2pt 8pt;
-
-  width: calc(var(--stop-name-font-size) * 2);
-}
-
-.line-number {
-  font-weight: bold;
-  font-size: var(--line-number-font-size);
-
-  font-variant-numeric: proportional-nums;
-}
-
-.line-artwork {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  padding: 2pt 8pt;
-}
-
+<style>
 .line-artwork img {
   height: var(--line-number-font-size);
 }
 
 .direction-container {
   font-size: var(--text-font-size);
+  grid-column: 2/3;
 
   display: grid;
   grid-template-columns: 1fr 4em;
@@ -142,9 +105,8 @@ export default {
 
 .departures {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 2em);
   justify-content: right;
-
   text-align: right;
 }
 
@@ -162,4 +124,3 @@ export default {
   background-color: #FFF;
 }
 </style>
-<style scoped src="../assets/line-styles.css"></style>

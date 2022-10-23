@@ -2,10 +2,10 @@
   <div v-if="wlResponse" class="stop">
     <h2 v-if="lines" class="stop-name">
       {{ name }}
-      <span class="walking-time"><img class="walking-time-icon" alt="Waking time" src="@/assets/person-walking-solid.svg">…{{ minutesToStopByFoot }} min
+      <span v-if="minutesToStopByFoot" class="walking-time"><img class="walking-time-icon" alt="Waking time" src="@/assets/person-walking-solid.svg">…{{ minutesToStopByFoot }} min
       </span>
     </h2>
-    <LineGroup v-for="name in this.lineGroupNames" :key="name" :lines="getLinesByName(name)" :name="name"/>
+    <LineGroup v-for="lineGroupName in this.lineGroupNames" :key="lineGroupName" :lines="getLinesByName(lineGroupName)" :name="lineGroupName"/>
   </div>
 </template>
 
@@ -24,8 +24,10 @@ export default {
   data() {
     return {
       name: this.stop.name,
+      diva: this.stop.diva,
       stopIDs: this.stop.stopIDs,
       minutesToStopByFoot: this.stop.minutesToStopByFoot,
+      filterOutLines: this.stop.filterOutLines,
 
       lines: []
     }
@@ -35,7 +37,7 @@ export default {
       if (this.wlResponse) {
         return this.wlResponse.data.monitors
             .filter(monitor => {
-              return this.stopIDs.includes(monitor.locationStop.properties.attributes.rbl);
+              return this.diva.toString() === monitor.locationStop.properties.name;
             })
             .flatMap(monitor => monitor.lines)
             .filter(line => line.name === name)
@@ -48,10 +50,11 @@ export default {
         return new Set(
             this.wlResponse.data.monitors
                 .filter(monitor => {
-                  return this.stopIDs.includes(monitor.locationStop.properties.attributes.rbl);
+                  return this.diva.toString() === monitor.locationStop.properties.name;
                 })
                 .flatMap(monitor => monitor.lines)
                 .map(line => line.name)
+                .filter(lineName => !(this.filterOutLines.includes(lineName)))
         );
       } else return new Set();
     }

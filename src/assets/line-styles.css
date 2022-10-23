@@ -1,33 +1,33 @@
-.type-ptMetro.line-U1 {
+[class^="line-U1"] {
     background-color: #ed4a72;
 }
 
-.type-ptMetro.line-U2 {
+[class^="line-U2"] {
     background-color: #9f70ad;
 }
 
-.type-ptMetro.line-U3 {
+[class^="line-U3"] {
     background-color: #ef825c;
 }
 
-.type-ptMetro.line-U4 {
+[class^="line-U4"] {
     background-color: #88c25b;
 }
 
-.type-ptMetro.line-U5 {
+[class^="line-U5"] {
     background-color: #4db2e5;
 }
 
-.type-ptMetro.line-U6 {
+[class^="line-U6"] {
     background-color: #d95936;
 }
 
-.type-ptBusNight {
+[class^="line-N"] {
     background-color: #092940;
     color: #ffe400;
 }
 
-.type-ptTramWLB {
+.line-WLB {
     background-color: #fff6d4;
     color: #257299;
 }

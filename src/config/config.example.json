@@ -1,0 +1,46 @@
+{
+  "style": {
+    "--main-font-family": "\"Ubuntu\", system-ui, san-serif",
+    "--stop-name-font-size": "24pt",
+    "--line-number-font-size": "24pt",
+    "--text-font-size": "18pt"
+  },
+  "stops": [
+    {
+      "name": "Resselgasse",
+      "diva": 60201094,
+      "minutesToStopByFoot": 2,
+      "filterOutLines": []
+    },
+    {
+      "name": "Karlsplatz",
+      "diva": 60200657,
+      "minutesToStopByFoot": 7,
+      "filterOutLines": [
+        "1",
+        "62",
+        "WLB",
+        "U2Z",
+        "59A"
+      ]
+    },
+    {
+      "name": "Oper/Karlsplatz U",
+      "diva": 60200975,
+      "minutesToStopByFoot": 7,
+      "filterOutLines": [
+        "1",
+        "62",
+        "WLB",
+        "U2Z",
+        "59A"
+      ]
+    },
+    {
+      "name": "Bärenmühldurchgang",
+      "diva": 60200193,
+      "minutesToStopByFoot": 2,
+      "filterOutLines": []
+    }
+  ]
+}
