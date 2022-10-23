@@ -104,7 +104,7 @@ export default {
 }
 
 #top-bar {
-  margin-bottom: 24pt;
+  margin-bottom: var(--clock-font-size);
 }
 
 #top-bar-row-container {
@@ -114,7 +114,7 @@ export default {
 }
 
 .beta-badge {
-  font-size: 24pt;
+  font-size: var(--clock-font-size);
 
   background-color: #fff;
   color: #000;

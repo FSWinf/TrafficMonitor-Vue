@@ -32,7 +32,7 @@ export default {
 
 <style scoped>
 div.time {
-  font-size: 48pt;
+  font-size: var(--clock-font-size);
   text-align: right;
 
   font-variant: tabular-nums;
