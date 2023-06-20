@@ -17,7 +17,17 @@ export default defineConfig({
         target: 'http://www.wienerlinien.at/',
         changeOrigin: true,
         secure: false
-      }
+      },
+      '/calendar/': {
+        target: 'https://calendar.google.com/',
+        changeOrigin: true,
+        secure: false
+      },
+      '/events/': {
+        target: 'https://tiss.tuwien.ac.at/',
+        changeOrigin: true,
+        secure: false
+      },
     }
   }
 })

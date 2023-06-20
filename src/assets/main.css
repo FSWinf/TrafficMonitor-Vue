@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Bitter:wght@700&family=IBM+Plex+Sans&family=Noto+Color+Emoji&display=swap');
+
 :root {
-    --main-font-family: "Ubuntu", system-ui, san-serif;
+    --main-font-family: "IBM Plex Sans", "Noto Colr Emoji Glyf", system-ui, san-serif;
 
     --stop-name-font-size: 24pt;
     --line-number-font-size: 24pt;

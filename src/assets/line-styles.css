@@ -1,5 +1,5 @@
 [class^="line-U1"] {
-    background-color: #ed4a72;
+    background-color: #e3000f;
 }
 
 [class^="line-U2"] {
@@ -20,6 +20,16 @@
 
 [class^="line-U6"] {
     background-color: #d95936;
+}
+
+[class^="line-1"],
+[class^="line-62"] {
+    background-color: #c4121a;
+}
+
+[class^="line-59A"],
+[class^="line-4A"] {
+    background-color: #032960;
 }
 
 [class^="line-N"] {

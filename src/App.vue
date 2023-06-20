@@ -1,110 +1,53 @@
 <template>
-  <div id="info-display-winf">
+  <div>
     <div id="top-bar">
       <div id="top-bar-row-container">
-        <div class="beta-badge">BETA</div>
-        <Clock/>
+        <img src="@/assets/fswinf-logo-wob.svg" class="fswinf-logo">
+        <Clock />
       </div>
       <hr>
     </div>
-    <div v-if="wlResponse && !dataOutdated" id="departure-monitor">
-      <Stop v-for="(stop, index) in this.stops" :key="index" :stop="stop" :wlResponse="wlResponse"/>
+    <div id="info-display-winf">
+      <div class="signage-left">
+        <TransitSignage />
+      </div>
+      <div class="signage-right">
+        <Calendar />
+      </div>
     </div>
-    <div v-if="!wlResponse || dataOutdated">
-      <div>Keine Echtzeitdaten</div>
-    </div>
+    <Announcements />
   </div>
 </template>
 
 <script>
 import Clock from "./components/Clock.vue";
-import Stop from "./components/Stop.vue";
-
-import CONFIG from './config/config.json';
+import TransitSignage from "./components/TransitSignage.vue";
+import Calendar from "./components/Calendar.vue";
+import Announcements from "./components/Announcements.vue";
 
 export default {
   name: 'App',
   components: {
     Clock,
-    Stop,
+    TransitSignage,
+    Calendar,
+    Announcements,
   },
-  data() {
-    return {
-      stops: CONFIG.stops,
-
-      requestParams: new URLSearchParams(
-          {}
-      ),
-
-      lastUpdated: Date,
-      dataOutdated: Boolean,
-
-      wlResponse: undefined,
-
-      updateWLIntervalEvent: Number,
-      updateTimeIntervalEvent: Number,
-      dateNow: new Date()
-    }
-  },
-  methods: {
-    _updateWL() {
-      fetch('/ogd_realtime/monitor?'
-          + this.requestParams,
-          {
-            headers: {
-              'content-type': "application/json;charset=UTF-8"
-            }
-          }
-      )
-          .then(response => response.json())
-          .then(json => {
-            this.lastUpdated = new Date();
-            this.dataOutdated = false;
-            this.wlResponse = json;
-          })
-          .catch(() => {
-            const now = new Date();
-            if (this.lastUpdated && now - this.lastUpdated > 30_000) {
-              this.dataOutdated = true;
-            }
-          });
-    },
-  },
-  mounted() {
-    // Set styles from configs
-    var domRoot = document.querySelector(':root');
-    for (const [styleKey, styleVar] of Object.entries(CONFIG.style)) {
-      domRoot.style.setProperty(styleKey, styleVar);
-    }
-
-    // Get all DIVAs
-    let DIVAs = new Set(
-        this.stops.map(stop => {
-          return stop.diva
-        })
-    );
-
-    // form http query params
-    DIVAs.forEach(diva => {
-      this.requestParams.append('diva', diva.toString());
-    })
-
-    this._updateWL();
-    this.updateWLIntervalEvent = window.setInterval(this._updateWL, 30_000);
-  },
-  beforeUnmount() {
-    clearInterval(this.updateWLIntervalEvent);
-  }
 }
 </script>
 
 <style>
 :root {
   padding: 12pt 32pt;
+  /* disable scrolling */
+  margin: 0;
+  padding-top: 24pt;
+  height: 100%;
+  overflow: hidden;
 }
 
-#top-bar {
-  margin-bottom: var(--clock-font-size);
+#top-bar hr {
+  margin-bottom: 0;
 }
 
 #top-bar-row-container {
@@ -113,15 +56,29 @@ export default {
   align-items: center;
 }
 
-.beta-badge {
-  font-size: var(--clock-font-size);
-
-  background-color: #fff;
-  color: #000;
-
-  padding: 0 8pt;
+.fswinf-logo {
+  height: 2.2em;
+  color: inherit;
 }
 
-#departure-monitor {
+#info-display-winf {
+  display: flex;
+  height: 100%;
+}
+
+.signage-left {
+  flex: 1;
+  padding-right: 12pt;
+  /* small white border on right */
+  border-right: 1px solid white;
+}
+
+.signage-right {
+  flex: 1;
+  padding: 0 12pt;
+}
+
+.signage-left, .signage-right {
+  padding-top: 12pt;
 }
 </style>

@@ -1,6 +1,5 @@
 {
   "style": {
-    "--main-font-family": "\"Ubuntu\", system-ui, san-serif",
     "--stop-name-font-size": "24pt",
     "--line-number-font-size": "24pt",
     "--text-font-size": "18pt",

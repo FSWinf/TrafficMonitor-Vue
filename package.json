@@ -7,9 +7,12 @@
     "preview": "vite preview --port 4173"
   },
   "dependencies": {
+    "dompurify": "^3.0.3",
+    "ical": "^0.8.0",
     "vue": "^3.2.38"
   },
   "devDependencies": {
+    "@types/ical": "^0.8.0",
     "@vitejs/plugin-vue": "^3.0.3",
     "vite": "^3.0.9"
   }
