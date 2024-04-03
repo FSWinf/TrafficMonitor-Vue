@@ -1,10 +1,7 @@
 <template>
   <div class="line-group">
     <div :class="[`line-${name}`, `type-${type}`]" class="line-number-box">
-      <div v-if="name !== 'WLB'" class="line-number">{{ name }}</div>
-      <div v-if="name === 'WLB'" class="line-artwork">
-        <img alt="Badner Bahn" src="@/assets/line-icon-wlb.png">
-      </div>
+      <div class="line-number">{{ name }}</div>
     </div>
     <div class="directions">
       <LineComponent v-for="(line, index) in this.lines" :key="index" :line="line" :type="type"/>
@@ -56,14 +53,6 @@ export default {
   font-size: var(--line-number-font-size);
 
   font-variant-numeric: proportional-nums;
-}
-
-.line-artwork {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  padding: 2pt 8pt;
 }
 
 .directions .direction-container:not(:last-of-type) {

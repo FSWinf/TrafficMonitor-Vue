@@ -27,7 +27,7 @@ export default {
       diva: this.stop.diva,
       stopIDs: this.stop.stopIDs,
       minutesToStopByFoot: this.stop.minutesToStopByFoot,
-      filterOutLines: this.stop.filterOutLines,
+      filterOutLines: this.stop.filterOutLines || [],
 
       lines: []
     }

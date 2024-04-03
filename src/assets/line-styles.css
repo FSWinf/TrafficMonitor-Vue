@@ -19,7 +19,7 @@
 }
 
 [class^="line-U6"] {
-    background-color: #d95936;
+    background-color: #ae4529;
 }
 
 .ptBusNight {
@@ -28,6 +28,12 @@
 }
 
 .type-TramWLB {
-    background-color: #fff6d4;
-    color: #257299;
+    color: rgba(255, 255, 255, 0.0);
+
+    background-color: #257299;
+    background-image: url('src/assets/line-icon-wlb.svg');
+    background-size: 1.75em;
+    background-position: center;
+    background-repeat: no-repeat;
 }
+
