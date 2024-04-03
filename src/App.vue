@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main">
     <div id="top-bar">
       <div id="top-bar-row-container">
         <img src="@/assets/fswinf-logo-wob.svg" class="fswinf-logo">
@@ -33,17 +33,52 @@ export default {
     Calendar,
     Announcements,
   },
+  data() {
+    return {
+      dateNow: new Date(),
+      updateTimeIntervalEvent: Number,
+    }
+  },
+  computed: {
+    transitTime() {
+      /*return this.dateNow.getHours() >= 20 || this.dateNow.getHours() < 7;*/
+      return true;
+    },
+  },
+  methods: {
+    updateTime() {
+      this.dateNow = new Date();
+    },
+  },
+  mounted() {
+    this.updateTimeIntervalEvent = window.setInterval(this.updateTime, 10000);
+  },
+  beforeUnmounted() {
+    clearInterval(this.updateTimeIntervalEvent);
+  }
 }
 </script>
 
 <style>
-:root {
+body {
+  margin: 0;
+  height: 100%;
+}
+#app {
+  height: calc(100% - (80pt));
+
   padding: 12pt 32pt;
+  padding-top: 24pt;
+}
+:root {
   /* disable scrolling */
   margin: 0;
-  padding-top: 24pt;
   height: 100%;
-  overflow: hidden;
+  /*overflow: hidden;*/
+}
+
+.main {
+  height: 100%;
 }
 
 #top-bar hr {

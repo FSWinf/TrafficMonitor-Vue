@@ -1,10 +1,11 @@
 <template>
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
   <div class="announcement" :class="{
     active: activeNotification !== null,
   }">
     <div v-if="activeNotification !== null">
       <h1>{{ activeNotification.title }}</h1>
-      <div v-html="purify(activeNotification.description)"> </div>
+      <AnnouncementContainer :content="activeNotification.description" />
       <img src="@/assets/fswinf-logo.svg" class="logo">
     </div>
   </div>
@@ -12,16 +13,20 @@
 
 <script>
 import ical from "ical";
-import DOMPurify from 'dompurify';
+import AnnouncementContainer from "./AnnouncementContainer.vue";
 
 export default {
   name: 'Announcements',
+  components: {
+    AnnouncementContainer,
+  },
   data() {
     return {
       now: new Date(),
       notificationsCalendarEvents: [],
       updateCalendarIntervalEvent: Number,
       nowUpdateIntervalEvent: Number,
+      done: false,
     };
   },
   methods: {
@@ -53,7 +58,8 @@ export default {
       this.notificationsCalendarEvents = await this.fetchCalendar("/calendar/ical/23cb4a35701161fd3793c0fcb5d1da52a04cb8f53b23b6f25bcb1077a584ab06%40group.calendar.google.com/public/basic.ics");
     },
     purify(html) {
-      return DOMPurify.sanitize(html);
+      // return DOMPurify.sanitize(html);
+      return html
     },
   },
   computed: {
@@ -68,7 +74,7 @@ export default {
   },
   mounted() {
     this.updateCalendar();
-    /* every 15 minutes */
+    /* every 5 minutes */
     this.updateCalendarIntervalEvent = window.setInterval(this.updateCalendar, 5 * 60_000);
     this.nowUpdateIntervalEvent = window.setInterval(() => {
       this.now = new Date();
@@ -77,7 +83,8 @@ export default {
   beforeUnmount() {
     clearInterval(this.updateCalendarIntervalEvent);
     clearInterval(this.nowUpdateIntervalEvent);
-  }
+    this.done = true;
+  },
 }
 </script>
 
@@ -91,6 +98,7 @@ export default {
   background-color: white;
   visibility: hidden;
 }
+
 .announcement.active {
   visibility: visible;
   color: black;
@@ -101,16 +109,17 @@ export default {
   text-align: center;
   font-size: 3em;
 }
+
 .announcement h1 {
   margin-top: 0;
   margin-bottom: 12pt;
   font-family: "Bitter", sans-serif;
 }
+
 .logo {
   position: fixed;
   bottom: 0;
   right: 0;
   height: 1.5em;
   margin: 0.5em 0.75em;
-}
-</style>
+}</style>

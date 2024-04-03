@@ -22,7 +22,7 @@ export default {
     },
   },
   mounted() {
-    this.updateTimeIntervalEvent = window.setInterval(this.updateTime, 10000);
+    this.updateTimeIntervalEvent = window.setInterval(this.updateTime, 1000);
   },
   beforeUnmounted() {
     clearInterval(this.updateTimeIntervalEvent);

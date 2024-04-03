@@ -7,9 +7,9 @@
       'event-fs': evt.source === 'FS',
       'event-roomtulearn': evt.source === 'roomTUlearn',
       'event-journaldienste': evt.source === 'Journaldienste',
+      'event-active': happeningNow(evt),
     }" v-for="evt in day.events">
       <div class="event-title">
-        <span v-if="happeningNow(evt)">🔴 </span>
         {{ evt.title }}
       </div>
       <div class="event-time" v-if="evt.fullDay">Ganztägig</div>
@@ -102,6 +102,7 @@ export default {
             }
           }
         }
+        const seen = new Set();
         for (let i in dates) {
           const date = dates[i];
           let curEvt = ev;
@@ -109,15 +110,23 @@ export default {
 
           let startDate = new Date(date.getTime());
           const dateLookupKey = date.toISOString().substring(0, 10);
+          if (seen.has(dateLookupKey)) {
+            continue;
+          }
+          seen.add(dateLookupKey);
+
+          let endDate = new Date(startDate.getTime() + curDuration);
 
           if ((curEvt.recurrences !== undefined) && (curEvt.recurrences[dateLookupKey] !== undefined)) {
             curEvt = curEvt.recurrences[dateLookupKey];
             startDate = new Date(curEvt.start);
+            endDate = new Date(curEvt.end);
+            if (base.title.startsWith("Otto ")) {
+              console.log(ev, curEvt);
+            }
           } else if ((curEvt.exdate !== undefined) && (curEvt.exdate[dateLookupKey] !== undefined)) {
             continue;
           }
-
-          const endDate = new Date(startDate.getTime() + curDuration);
 
           if (endDate < rangeStart || startDate > rangeEnd || endDate < this.now) {
             continue;
@@ -236,17 +245,25 @@ export default {
         .map(ev => ({ ...ev, source: "roomTUlearn", title: "roomTUlearn Seminarraum DE0110", description: "" }));
     },
     journaldiensteCalendarEvents() {
-      return this.convertCalendarDataToEvents(this.journaldiensteCalendarData)
+      const ret = this.convertCalendarDataToEvents(this.journaldiensteCalendarData)
         .slice(0, 2)
-        .map(ev => ({ ...ev, source: "Journaldienste", title: `Journaldienst: ${ev.title}` }));
+        .map(ev => ({ ...ev, source: "Journaldienste", title: `Journaldienst: ${ev.title}` }))
+        .filter(/* today */ ev => ev.start.toDateString() === this.now.toDateString());
+      if (ret.length === 2 && !this.happeningNow(ret[0])) {
+        return [ret[0]];
+      }
+      return ret;
     },
     groupedEvents() {
       const allEvents = [
         ...this.splitMultiDayEvents(this.fsCalendarEvents),
         ...this.splitMultiDayEvents(this.seminarraumCalendarEvents),
         ...this.splitMultiDayEvents(this.journaldiensteCalendarEvents),
-      ];
-      allEvents.sort((a, b) => a.start - b.start);
+      ].filter((ev) => this.now < ev.end);
+      allEvents.sort((a, b) => {
+        if (a.start === b.start) return a.end - b.end;
+        return a.start - b.start;
+      });
       return this.groupEventsDay(allEvents);
     },
   },
@@ -284,16 +301,68 @@ export default {
   /* rounded corners */
   border-radius: 4pt;
   margin-bottom: 6pt;
+
+  --fs-dark: rgb(122, 162, 101);
+  --fs-light: rgb(137, 181, 113);
+  --roomtulearn-dark: #76a4d6;
+  --roomtulearn-light: #8ebdef;
+  --journaldienste-dark: #7d7fe1;
+  --journaldienste-light: #9192ea;
+}
+
+@keyframes slide-stripes {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: -100% 0%;
+  }
 }
 
 .event-fs {
-  background-color: rgb(100, 142, 77);
+  border-left: 4pt solid var(--fs-dark);
+  background-color: var(--fs-light);
 }
+.event-fs.event-active {
+  background: repeating-linear-gradient(
+    45deg, 
+    var(--fs-dark), var(--fs-dark) 10pt, 
+    var(--fs-light) 10pt, var(--fs-light) 20pt
+  );
+  background-size: 200% 200%;
+  animation: slide-stripes 75s linear infinite;
+  /* small white border to highlight it */
+  border: 3pt solid white;
+}
+
 .event-roomtulearn {
-  background-color: #006699;
+  border-left: 4pt solid var(--roomtulearn-dark);
+  background-color: var(--roomtulearn-light);
 }
+.event-roomtulearn.event-active {
+  background: repeating-linear-gradient(
+    45deg, 
+    var(--roomtulearn-dark), var(--roomtulearn-dark) 10pt, 
+    var(--roomtulearn-light) 10pt, var(--roomtulearn-light) 20pt
+  );
+  background-size: 200% 200%;
+  animation: slide-stripes 75s linear infinite;
+  border: 3pt solid white;
+}
+
 .event-journaldienste {
-  background-color: #b69e3c;
+  border-left: 4pt solid var(--journaldienste-dark);
+  background-color: var(--journaldienste-light);
+}
+.event-journaldienste.event-active {
+  background: repeating-linear-gradient(
+    45deg, 
+    var(--journaldienste-dark), var(--journaldienste-dark) 10pt, 
+    var(--journaldienste-light) 10pt, var(--journaldienste-light) 20pt
+  );
+  background-size: 200% 200%;
+  animation: slide-stripes 75s linear infinite;
+  border: 3pt solid white;
 }
 
 .event-title {
