@@ -5,7 +5,7 @@
       <span v-if="minutesToStopByFoot" class="walking-time"><img class="walking-time-icon" alt="Waking time" src="@/assets/person-walking-solid.svg">…{{ minutesToStopByFoot }} min
       </span>
     </h2>
-    <LineGroup v-for="lineGroupName in this.lineGroupNames" :key="lineGroupName" :lines="getLinesByName(lineGroupName)" :name="lineGroupName"/>
+    <LineGroup v-for="lineGroupName in this.lineGroupNames" :key="lineGroupName" :lines="getLinesByName(lineGroupName)" :name="lineGroupName" :type="getLineGroupType(lineGroupName)"/>
   </div>
 </template>
 
@@ -42,6 +42,15 @@ export default {
             .flatMap(monitor => monitor.lines)
             .filter(line => line.name === name)
       } else return []
+    },
+    getLineGroupType(name) {
+      // Take the first line of the group
+      const firstLine = this.getLinesByName(name)[0];
+      if (firstLine) {
+        // return firstLine.type;
+        // Strip prefix "pt" if present
+        return firstLine.type.replace(/^pt/, "");
+      } else return "";
     }
   },
   computed: {

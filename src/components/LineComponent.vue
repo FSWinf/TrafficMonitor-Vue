@@ -1,17 +1,17 @@
 <template>
   <div class="direction-container">
     <div class="destination-container">
-      <div class="destination">{{ line.type === 'ptMetro' ? getTitleCase(destination) : destination }}</div>
+      <div class="destination">{{ formatDestinationString(destination) }}</div>
       <div v-if="alternateDestination" class="alternative-destination">
-        {{ line.type === 'ptMetro' ? getTitleCase(alternateDestination) : alternateDestination }}
+        {{ formatDestinationString(alternateDestination) }}
       </div>
     </div>
     <div v-if="departures" class="departures">
-      <div v-for="(departure, index) in departures" :key="index"
-           class="departure departure-countdown">
-          <span :class="{'alternative-departure': departure.goesToAlternateDestination}">{{
-              departure.countdown
-            }}</span>
+      <div v-for="(departure, index) in departures" :key="index" class="departure departure-countdown" :class="{'show-wheelchair': this.type=='Tram'}">
+        <span
+          :class="{ 'alternative-departure': departure.goesToAlternateDestination, 'wheelchair-accessible': departure.wheelchairAccessible }">{{
+        departure.countdown
+      }}</span>
       </div>
     </div>
   </div>
@@ -22,7 +22,8 @@ export default {
   name: "LineComponent",
   components: {},
   props: {
-    line: Object
+    line: Object,
+    type: String
   },
   data() {
     return {
@@ -31,25 +32,37 @@ export default {
   },
   computed: {
     destination: function () {
-      return this.line.towards.trim();
+      // return this.line.towards.trim();
+      return this.formatDestinationString(this.line.towards);
     },
     departures: function () {
       this.alternateDestination = null;
       return this.line.departures.departure.slice(0, 3).map(dep => {
-        let towards = dep.vehicle?.towards;
-        if (towards && towards.trim().localeCompare(this.destination, 'de-AT', {sensitivity: 'base'})) {
-          this.alternateDestination = towards.trim();
+        let wheelchairAccessible = dep.vehicle ? dep.vehicle.barrierFree : this.line.barrierFree;
+
+        let towards = this.formatDestinationString(dep.vehicle?.towards);
+        if (towards && towards != this.destination) {
+          // Check Alt Destination, if not set, set it.
+          // If set, compair if identical, if not return null.
+          if (!this.alternateDestination) {
+            this.alternateDestination = towards;
+          } else {
+            // Check if identical
+            if (this.alternateDestination != towards) return null;
+          }
           return {
             goesToAlternateDestination: true,
-            countdown: dep.departureTime.countdown
+            countdown: dep.departureTime.countdown,
+            wheelchairAccessible: wheelchairAccessible
           };
         } else {
           return {
             goesToAlternateDestination: false,
-            countdown: dep.departureTime.countdown
+            countdown: dep.departureTime.countdown,
+            wheelchairAccessible: wheelchairAccessible
           }
         }
-      })
+      }).filter(o => o);
     },
   },
   methods: {
@@ -57,6 +70,28 @@ export default {
       return string.trim().toLocaleLowerCase('de-AT').split(' ').map(function (word) {
         return (word.charAt(0).toUpperCase() + word.slice(1));
       }).join(' ');
+    },
+    formatDestinationString(dest) {
+      // Perform the following
+      // - trim() the string
+      // - Transform to title case, but only if all caps
+      // - Strip trailing " S", " U" and " S U"
+      // - Strip Prepending "Gl. XX - "
+
+      if (!dest) return null;
+
+      let formatted = dest.trim();
+      if (formatted === formatted.toUpperCase()) {
+        formatted = this.getTitleCase(formatted);
+      }
+
+      // Strip trailing " S", " U", and " S U"
+      formatted = formatted.replace(/(\sS|\sU|\sS\sU)$/g, '');
+
+      // Strip Prepending "Gl. XX - ", where XX is any number
+      formatted = formatted.replace(/^Gl\.\s\d+\s-\s/, '');
+
+      return formatted;
     }
   }
 }
@@ -105,7 +140,7 @@ export default {
 
 .departures {
   display: grid;
-  grid-template-columns: repeat(3, 2em);
+  grid-template-columns: repeat(3, 3em);
   justify-content: right;
   text-align: right;
 }
@@ -122,5 +157,22 @@ export default {
 .departure-countdown span.alternative-departure {
   color: #000;
   background-color: #FFF;
+}
+
+.show-wheelchair .wheelchair-accessible::before {
+  content: '';
+  display: inline-block;
+  height: 0.66em;
+  width: 0.66em;
+  mask-image: url(src/assets/wheelchair-regular.svg);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  margin-right: 0.25em;
+
+  background-color: #FFF;
+}
+
+.show-wheelchair span.alternative-departure.wheelchair-accessible::before {
+  background-color: #000;
 }
 </style>

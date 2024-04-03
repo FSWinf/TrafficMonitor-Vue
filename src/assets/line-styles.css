@@ -22,22 +22,12 @@
     background-color: #d95936;
 }
 
-[class^="line-1"],
-[class^="line-62"] {
-    background-color: #c4121a;
-}
-
-[class^="line-59A"],
-[class^="line-4A"] {
-    background-color: #032960;
-}
-
-[class^="line-N"] {
+.ptBusNight {
     background-color: #092940;
     color: #ffe400;
 }
 
-.line-WLB {
+.type-TramWLB {
     background-color: #fff6d4;
     color: #257299;
 }

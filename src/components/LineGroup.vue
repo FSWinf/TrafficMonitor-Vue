@@ -1,13 +1,13 @@
 <template>
   <div class="line-group">
-    <div :class="[`line-${name}`]" class="line-number-box">
+    <div :class="[`line-${name}`, `type-${type}`]" class="line-number-box">
       <div v-if="name !== 'WLB'" class="line-number">{{ name }}</div>
       <div v-if="name === 'WLB'" class="line-artwork">
         <img alt="Badner Bahn" src="@/assets/line-icon-wlb.png">
       </div>
     </div>
     <div class="directions">
-      <LineComponent v-for="(line, index) in this.lines" :key="index" :line="line"/>
+      <LineComponent v-for="(line, index) in this.lines" :key="index" :line="line" :type="type"/>
     </div>
   </div>
 </template>
@@ -22,6 +22,7 @@ export default {
   },
   props: {
     name: String,
+    type: String,
     lines: Array
   },
   computed: {}
@@ -46,7 +47,8 @@ export default {
   border-radius: 4pt;
   padding: 2pt 8pt;
 
-  width: calc(var(--stop-name-font-size) * 2);
+  box-sizing: border-box;
+  width: calc(var(--stop-name-font-size) * 2 + 16pt);
 }
 
 .line-number {
