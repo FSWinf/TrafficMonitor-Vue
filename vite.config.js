@@ -14,7 +14,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/ogd_realtime/': {
-        target: 'http://www.wienerlinien.at/',
+        target: 'https://www.wienerlinien.at/',
         changeOrigin: true,
         secure: false
       },
