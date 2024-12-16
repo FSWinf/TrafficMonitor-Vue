@@ -206,7 +206,7 @@ export default {
   display: inline-block;
   height: 0.66em;
   width: 0.66em;
-  mask-image: url(src/assets/wheelchair-regular.svg);
+  mask-image: url(@/assets/wheelchair-regular.svg);
   mask-size: contain;
   mask-repeat: no-repeat;
   margin-right: 0.25em;

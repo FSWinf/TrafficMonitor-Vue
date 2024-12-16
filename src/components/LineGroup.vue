@@ -59,4 +59,4 @@ export default {
   margin-bottom: 8pt;
 }
 </style>
-<style scoped src="../assets/line-styles.css"></style>
+<style scoped src="@/assets/line-styles.css"></style>
