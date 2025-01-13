@@ -5,7 +5,7 @@
       <span v-if="minutesToStopByFoot" class="walking-time"><img class="walking-time-icon" alt="Waking time" src="@/assets/person-walking-solid.svg">…{{ minutesToStopByFoot }} min
       </span>
     </h2>
-    <LineGroup v-for="lineGroupName in this.lineGroupNames" :key="lineGroupName" :lines="getLinesByName(lineGroupName)" :name="lineGroupName" :type="getLineGroupType(lineGroupName)"/>
+    <LineGroup v-for="lineGroupName in this.lineGroupNames" :key="lineGroupName" :lines="getLinesByName(lineGroupName)" :trafficInfos="getTrafficInfosByName(lineGroupName)" :name="lineGroupName" :type="getLineGroupType(lineGroupName)"/>
   </div>
 </template>
 
@@ -41,6 +41,23 @@ export default {
             })
             .flatMap(monitor => monitor.lines)
             .filter(line => line.name === name)
+      } else return []
+    },
+    getTrafficInfosByName(name) {
+      if (this.wlResponse) {
+        const x =  (this.wlResponse.data.trafficInfos || [])
+            .filter(info => {
+              return info.relatedLines.includes(name);
+            })
+            // remove traffic infos without related stops
+            .filter(info => info.relatedStops.length > 0);
+        if (this.getLinesByName(name).some(line => line.trafficjam)) {
+          x.push({
+            title: `${name}: Stau in Zufahrt`,
+            description: "",
+          });
+        }
+        return x;
       } else return []
     },
     getLineGroupType(name) {

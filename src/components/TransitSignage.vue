@@ -78,7 +78,10 @@ export default {
     // form http query params
     DIVAs.forEach(diva => {
       this.requestParams.append('diva', diva.toString());
-    })
+    });
+    this.requestParams.append('activateTrafficInfo', 'stoerungkurz');
+    this.requestParams.append('activateTrafficInfo', 'stoerunglang');
+    this.requestParams.append('activateTrafficInfo', 'information');
 
     this._updateWL();
     this.updateWLIntervalEvent = window.setInterval(this._updateWL, 30_000);
