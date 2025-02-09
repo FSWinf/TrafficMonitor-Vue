@@ -56,13 +56,15 @@ export default {
           return {
             goesToAlternateDestination: true,
             countdown: dep.departureTime.countdown,
-            wheelchairAccessible: wheelchairAccessible
+            wheelchairAccessible: wheelchairAccessible,
+            platform: dep.vehicle?.platform
           };
         } else {
           return {
             goesToAlternateDestination: false,
             countdown: dep.departureTime.countdown,
-            wheelchairAccessible: wheelchairAccessible
+            wheelchairAccessible: wheelchairAccessible,
+            platform: dep.vehicle?.platform
           }
         }
       }).filter(o => o);

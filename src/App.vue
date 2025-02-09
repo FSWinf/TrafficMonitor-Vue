@@ -2,18 +2,12 @@
   <div class="main">
     <div id="top-bar">
       <div id="top-bar-row-container">
-        <img src="@/assets/fswinf-logo-wob.svg" class="fswinf-logo">
         <Clock />
       </div>
       <hr>
     </div>
     <div id="info-display-winf">
-      <div class="signage-left">
         <TransitSignage />
-      </div>
-      <div class="signage-right">
-        <Calendar />
-      </div>
     </div>
     <Announcements />
   </div>
@@ -87,7 +81,7 @@ body {
 
 #top-bar-row-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 }
 
