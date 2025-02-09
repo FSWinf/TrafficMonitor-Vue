@@ -1,16 +1,16 @@
 <template>
   <div>
     <div class="line-group">
-      <div :class="[`line-${name}`, `type-${type}`]" class="line-number-box">
+      <div :class="[`line-${name}`, `type-${type}`, hasTrafficInfos ? 'advisory' : '']" class="line-number-box">
         <div class="line-number">{{ name }}</div>
       </div>
       <div class="directions">
         <LineComponent v-for="(line, index) in this.lines" :key="index" :line="line" :type="type"/>
       </div>
     </div>
-    <div class="traffic-infos">
+    <div class="traffic-infos" v-if="hasTrafficInfos">
       <div class="traffic-info" v-for="(info, index) in this.trafficInfos" :key="index">
-        <div class="traffic-info-title"><img class="warning-icon" src="@/assets/triangle-exclamation-solid.svg"> {{ info.title }}</div>
+        <div class="traffic-info-title">{{ info.title }}</div>
         <div class="traffic-info-description" v-if="info.description">{{ info.description }}</div>
       </div>
     </div>
@@ -31,7 +31,11 @@ export default {
     lines: Array,
     trafficInfos: Array,
   },
-  computed: {}
+  computed: {
+    hasTrafficInfos() {
+      return this.trafficInfos.length > 0;
+    }
+  }
 }
 </script>
 
@@ -48,6 +52,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 
   background-color: #262626;
   border-radius: 4pt;
@@ -57,7 +62,25 @@ export default {
   width: calc(var(--stop-name-font-size) * 2 + 16pt);
 }
 
+
+.line-number-box.advisory::after {
+  content: '';
+  position: absolute;
+  top: 55%;
+  right: -10%;
+  
+  height: 1.25em;
+  width: 1.25em;
+  mask-image: url(@/assets/warning-triangle-silhouette.svg);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+
+  background-color: #e7c121;
+}
+
 .line-number {
+  text-align: center;
+
   font-weight: bold;
   font-size: var(--line-number-font-size);
 
@@ -70,21 +93,20 @@ export default {
 
 /* in dark grey box */
 .traffic-infos {
-  margin-left: 72pt;
+  margin-left: calc(var(--line-number-font-size) * 3.5);
 }
 .traffic-info {
   background-color: #262626;
-  padding: 8pt;
-  border-radius: 4pt;
-  margin-bottom: 8pt;
+  padding: var(--text-font-size);
+  margin-bottom: calc(var(--info-title-size) * 0.25);
 }
 .traffic-info-title {
   font-weight: bold;
-  font-size: 16pt;
-  margin-bottom: 4pt;
+  font-size: var(--info-title-size);
+  margin-bottom: calc(var(--info-title-size) * 0.25);
 }
 .traffic-info-description {
-  font-size: 14pt;
+  font-size: var(--text-font-size);
 }
 
 .warning-icon {
