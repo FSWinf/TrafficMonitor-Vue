@@ -61,8 +61,7 @@ body {
 #app {
   height: calc(100% - (80pt));
 
-  padding: 12pt 32pt;
-  padding-top: 24pt;
+  padding: calc(var(--text-font-size) * 1.5);
 }
 :root {
   /* disable scrolling */

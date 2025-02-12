@@ -10,7 +10,7 @@
     </div>
     <div class="traffic-infos" v-if="hasTrafficInfos">
       <div class="traffic-info" v-for="(info, index) in this.trafficInfos" :key="index">
-        <div class="traffic-info-title">{{ info.title }}</div>
+        <div class="traffic-info-title" v-if="info.description != info.title">{{ info.title }}</div>
         <div class="traffic-info-description" v-if="info.description">{{ info.description }}</div>
       </div>
     </div>
@@ -42,7 +42,7 @@ export default {
 <style>
 .line-group {
   display: grid;
-  grid-template-columns: 64pt 1fr;
+  grid-template-columns: calc(var(--line-number-font-size) * 3) 1fr;
   grid-column-gap: 12pt;
   align-items: center;
   margin-bottom: 12pt;
