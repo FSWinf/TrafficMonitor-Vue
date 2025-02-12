@@ -6,26 +6,19 @@
       </div>
       <hr>
     </div>
-    <div id="info-display-winf">
-        <TransitSignage />
-    </div>
-    <Announcements />
+    <TransitSignage />
   </div>
 </template>
 
 <script>
 import Clock from "./components/Clock.vue";
 import TransitSignage from "./components/TransitSignage.vue";
-import Calendar from "./components/Calendar.vue";
-import Announcements from "./components/Announcements.vue";
 
 export default {
   name: 'App',
   components: {
     Clock,
-    TransitSignage,
-    Calendar,
-    Announcements,
+    TransitSignage
   },
   data() {
     return {
@@ -82,31 +75,5 @@ body {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-}
-
-.fswinf-logo {
-  height: 2.2em;
-  color: inherit;
-}
-
-#info-display-winf {
-  display: flex;
-  height: 100%;
-}
-
-.signage-left {
-  flex: 1;
-  padding-right: 12pt;
-  /* small white border on right */
-  border-right: 1px solid white;
-}
-
-.signage-right {
-  flex: 1;
-  padding: 0 12pt;
-}
-
-.signage-left, .signage-right {
-  padding-top: 12pt;
 }
 </style>
