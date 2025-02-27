@@ -88,7 +88,7 @@ export default {
         }
 
         const rangeStart = new Date(this.now.getTime() - DAY_MILLISECONDS * 1);
-        const rangeEnd = new Date(this.now.getTime() + DAY_MILLISECONDS * 7);
+        const rangeEnd = new Date(this.now.getTime() + DAY_MILLISECONDS * 21);
         const duration = evEnd - evStart;
         const dates = ev.rrule.between(
           rangeStart,
@@ -121,9 +121,6 @@ export default {
             curEvt = curEvt.recurrences[dateLookupKey];
             startDate = new Date(curEvt.start);
             endDate = new Date(curEvt.end);
-            if (base.title.startsWith("Otto ")) {
-              console.log(ev, curEvt);
-            }
           } else if ((curEvt.exdate !== undefined) && (curEvt.exdate[dateLookupKey] !== undefined)) {
             continue;
           }
