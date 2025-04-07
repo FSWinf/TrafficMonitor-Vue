@@ -97,6 +97,7 @@ export default {
         );
         if (ev.recurrences !== undefined) {
           for (let r in ev.recurrences) {
+            // manual recurrences
             if (new Date(r) > rangeStart && new Date(r) < rangeEnd) {
               dates.push(new Date(r));
             }
@@ -107,6 +108,10 @@ export default {
           const date = dates[i];
           let curEvt = ev;
           const curDuration = duration;
+
+          if (date.getTimezoneOffset() !== evStart.getTimezoneOffset()) {
+            date.setHours(date.getHours() + (date.getTimezoneOffset() - evStart.getTimezoneOffset()) / 60);
+          }
 
           let startDate = new Date(date.getTime());
           const dateLookupKey = date.toISOString().substring(0, 10);
