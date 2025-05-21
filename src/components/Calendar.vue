@@ -55,6 +55,7 @@ export default {
       seminarraumCalendarData: {},
       journaldiensteCalendarData: {},
       updateCalendarIntervalEvent: Number,
+      updateCalendarSlowIntervalEvent: Number,
       nowUpdateIntervalEvent: Number,
     };
   },
@@ -228,9 +229,12 @@ export default {
       this.now = new Date();
       await Promise.all([
         this.updateFSCalendar(),
-        this.updateSeminarraumCalendar(),
         this.updateJournaldiensteCalendar(),
       ]);
+    },
+    async updateCalendarSlow() {
+      this.now = new Date();
+      await this.updateSeminarraumCalendar();
     },
     happeningNow(evt) {
       return evt.start < this.now && evt.end > this.now;
@@ -271,14 +275,18 @@ export default {
   },
   mounted() {
     this.updateCalendar();
-    /* every 15 minutes */
+    this.updateCalendarSlow();;
+    /* every 5 minutes */
     this.updateCalendarIntervalEvent = window.setInterval(this.updateCalendar, 5 * 60_000);
+    /* every hour */
+    this.updateCalendarSlowIntervalEvent = window.setInterval(this.updateCalendarSlow, 60 * 60_000);
     this.nowUpdateIntervalEvent = window.setInterval(() => {
       this.now = new Date();
     }, 15000);
   },
   beforeUnmount() {
     clearInterval(this.updateCalendarIntervalEvent);
+    clearInterval(this.updateCalendarSlowIntervalEvent);
     clearInterval(this.nowUpdateIntervalEvent);
   }
 }
